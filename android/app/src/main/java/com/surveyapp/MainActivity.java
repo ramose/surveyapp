@@ -1,4 +1,4 @@
-package com.surveyapp;
+package com.pickerapp;
 
 import android.os.Bundle;
 

@@ -1,12 +1,10 @@
 {
-  "name": "surveyapp",
-  "displayName": "surveyapp",
+  "name": "pickerapp",
+  "displayName": "pickerapp",
   "expo": {
-    "name": "surveyapp",
-    "slug": "surveyapp",
+    "name": "pickerapp",
+    "slug": "pickerapp",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "assetBundlePatterns": ["**/*"]
   }
 }
