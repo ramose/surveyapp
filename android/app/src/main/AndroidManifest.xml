@@ -28,7 +28,7 @@
   >
     <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://exp.host/@ramose73/pickerapp" />
     <meta-data android:name="expo.modules.updates.EXPO_SDK_VERSION" android:value="41.0.0" />
-    <meta-data android:name="expo.modules.updates.EXPO_RELEASE_CHANNEL" android:value="default" />
+    <meta-data android:name="expo.modules.updates.EXPO_RELEASE_CHANNEL" android:value="dev" />
 
   <activity
     android:name=".MainActivity"

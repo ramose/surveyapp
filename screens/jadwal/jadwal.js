@@ -8,9 +8,18 @@ import {
   Pressable,
   TouchableHighlight,
   SafeAreaView,
+  Alert,
 } from "react-native";
-import { ActivityIndicator, Card, Colors, IconButton, Subheading, Title } from "react-native-paper";
-import { jadwalUrl } from "../../services/api";
+import {
+  ActivityIndicator,
+  Button,
+  Card,
+  Colors,
+  IconButton,
+  Subheading,
+  Title,
+} from "react-native-paper";
+import { jadwalHariIniUrl, jadwalUrl } from "../../services/api";
 import axios from "axios";
 import moment from "moment";
 import { ButtonGroup } from "react-native-elements";
@@ -52,7 +61,6 @@ const JadwalScreen = ({ route }) => {
   }
 
   useEffect(() => {
-    // setId(params.id);
     getJadwalHariIni(params.data.id);
   }, []);
 
@@ -77,10 +85,13 @@ const JadwalScreen = ({ route }) => {
 
   function getJadwalHariIni(id) {
     setLoading(true);
-    let today = moment(new Date()).format("DD-MMMM-YYYY");
+    let today = moment(new Date()).format("YYYY-MM-DD");
+    let path =
+      jadwalHariIniUrl + today + "/" + id + "/" + params.data.id_company;
+
     try {
       axios
-        .get(jadwalUrl + id + "/" + 0)
+        .get(jadwalHariIniUrl + today + "/" + id + "/" + params.data.id_company)
         .then((response) => {
           console.log(response.data);
           if (response.data.status === "error") {
@@ -92,14 +103,15 @@ const JadwalScreen = ({ route }) => {
             ]);
           } else {
             let res = response.data.data;
-            res.forEach((d) => {
-              let dd = moment(d.pickup_date).format("DD-MMMM-YYYY");
-              let temp = [];
-              if (dd === today) {
-                temp.push(d);
-              }
-              setData(temp);
-            });
+            setData(res);
+            // res.forEach((d) => {
+            //   let dd = moment(d.pickup_date).format("DD-MMMM-YYYY");
+            //   let temp = [];
+            //   if (dd === today) {
+            //     temp.push(d);
+            //   }
+            //   setData(temp);
+            // });
           }
         })
         .catch((error) => {
@@ -139,12 +151,30 @@ const JadwalScreen = ({ route }) => {
     }
   }
 
+  function logout() {
+    Alert.alert("", "Yakin akan keluar?", [
+      { 
+        text: "YA",
+        onPress: () => nav.replace('login')
+      },
+      { 
+        text: "TIDAK",
+        style:'cancel'
+      }
+    ]);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Card style={{ margin: 10, padding: 10, borderRadius: 10 }}>
-        <View>
-          <Title>{params.data.name}</Title>
-          <Subheading>{params.data.company_name}</Subheading>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View>
+            <Title>{params.data.name}</Title>
+            <Subheading>{params.data.company_name}</Subheading>
+          </View>
+          <Button icon="close" onPress={() => logout()}>
+            Keluar
+          </Button>
         </View>
       </Card>
       <ButtonGroup
@@ -158,12 +188,17 @@ const JadwalScreen = ({ route }) => {
       />
       {loading && (
         <View style={styles.center}>
-          <ActivityIndicator animating={true} color={Colors.green400} size={30}/>
+          <ActivityIndicator
+            animating={true}
+            color={Colors.green400}
+            size={30}
+          />
         </View>
       )}
       {!loading && data.length === 0 && (
-          <View style={styles.center}>
-        <Subheading>Tidak ada jadwal.</Subheading></View>
+        <View style={styles.center}>
+          <Subheading>Tidak ada jadwal.</Subheading>
+        </View>
       )}
       {!loading && data.length > 0 && (
         <FlatList
