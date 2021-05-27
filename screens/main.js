@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Dimensions } from "react-native";
 import { Button } from "react-native-paper";
 import { ButtonGroup, ListItem } from "react-native-elements";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { listRumahUrl } from '../services/api'
 
 const styles = StyleSheet.create({
   container: {
@@ -15,8 +17,12 @@ const Main = ({ route, navigation }) => {
   const params = route.params;
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+  // const [priviledge, setPriviledge] = useState(null)
+  const [user, setuser] = useState(null)
+  const [listRumah, setListRumah] = useState([])
   const component1 = () => <Text>Aktifitas</Text>;
   const component2 = () => <Text>Daftar Rumah</Text>;
+  const [loading, setLoading] = useState(false)
 
   const buttons = [{ element: component1 }, { element: component2 }];
 
@@ -53,10 +59,54 @@ const Main = ({ route, navigation }) => {
   }
 
   useEffect(() => {
-    // do something
+    getUser()
   }, []);
 
-  const listRumah = () => {};
+  useEffect(() => {
+    getRumah()
+  }, [user]);
+  
+
+  const getUser = async (value) => {
+    try {
+      let user = await AsyncStorage.getItem('@user')
+      setuser(user)
+    } catch (e) {
+      // saving error
+      console.log('error get data:', e)
+    }
+  };
+
+  function getRumah() {
+    setLoading(true);
+    try {
+      axios
+        .get(listRumahUrl + "/privilege=" + user.priviledge + "&id_user=" + user.id) //privilege={{privilege}}&id_user={{id_user}}
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.status === "error") {
+            Alert.alert(" ", response.data.message, [
+              {
+                text: "OK",
+                onPress: () => {},
+              },
+            ]);
+          } else {
+            console.log('------- list rumah ----------------');
+            console.log(response.data.data);
+            // setData(response.data.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => setLoading(false));
+    } catch (error) {
+      console.log("error:", error);
+    }
+  }
+
+  // const listRumah = () => {};
 
   return (
     <View style={styles.container}>

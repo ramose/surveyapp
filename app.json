@@ -1,10 +1,13 @@
 {
-  "name": "pickerapp",
+  "name": "UB Picker",
   "displayName": "pickerapp",
   "expo": {
-    "name": "pickerapp",
+    "name": "UB Picker",
     "slug": "pickerapp",
     "version": "1.0.0",
-    "assetBundlePatterns": ["**/*"]
-  }
+    "assetBundlePatterns": ["**/*"],
+    "icon":"https://i.postimg.cc/J4MnNRvm/logo-ub-picker.png"
+  },
+  "orientation":"portrait",
+  "description":"App demo untuk kolektor sampah carbon"
 }

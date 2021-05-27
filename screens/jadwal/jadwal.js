@@ -23,6 +23,7 @@ import { jadwalHariIniUrl, jadwalUrl } from "../../services/api";
 import axios from "axios";
 import moment from "moment";
 import { ButtonGroup } from "react-native-elements";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const styles = StyleSheet.create({
   container: {
@@ -43,6 +44,7 @@ const JadwalScreen = ({ route }) => {
   const [data, setData] = useState([]);
   const [jadwalToday, setJadwalToday] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [user, setUser] = useState(null)
 
   const component1 = () => <Text>Jadwal Hari Ini</Text>;
   const component2 = () => <Text>Semua Jadwal</Text>;
@@ -60,7 +62,18 @@ const JadwalScreen = ({ route }) => {
     }
   }
 
+  const getData = async (value) => {
+    try {
+      let user = await AsyncStorage.getItem('@user')
+      console.log('user:',user)
+    } catch (e) {
+      // saving error
+      console.log('error get data:', e)
+    }
+  };
+
   useEffect(() => {
+    getData()
     getJadwalHariIni(params.data.id);
   }, []);
 
@@ -89,9 +102,12 @@ const JadwalScreen = ({ route }) => {
     let path =
       jadwalHariIniUrl + today + "/" + id + "/" + params.data.id_company;
 
+      console.log(path)
+
+
     try {
       axios
-        .get(jadwalHariIniUrl + today + "/" + id + "/" + params.data.id_company)
+        .get(path)
         .then((response) => {
           console.log(response.data);
           if (response.data.status === "error") {

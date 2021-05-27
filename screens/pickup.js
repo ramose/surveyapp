@@ -15,6 +15,7 @@ import { Card, Title, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 import { useLayoutEffect } from "react";
+// import Modal from "react-native-modal";
 
 const styles = StyleSheet.create({
   container: {
@@ -49,12 +50,18 @@ const Pickup = () => {
   const [error, setError] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const step = 0.25;
+  const [alertMessage, setAlertMessage] = useState("");
 
   const _updateInfo = (info) => {
+    // let s = info.split("|");
+    // console.log(s[1]);
+
     try {
       setInfo(JSON.parse(info));
     } catch (error) {
       setError(true);
+      setAlertMessage("Tidak dapat membaca data");
+      setShowModal(true);
     }
   };
 
@@ -94,20 +101,23 @@ const Pickup = () => {
     // Alert.alert("Ambil Sampah", "Data sudah tercatat.", [
     //   { text: "OK", onPress: () => navigation.goBack() },
     // ]);
+    setError(false);
+    setAlertMessage("Data berhasil disimpan!");
     setShowModal(true);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Modal transparent={true} animationType="slide" visible={showModal}>
+      <Modal transparent={false} animationType="slide" visible={showModal}>
         <View
           style={{
             flex: 1,
             padding: 10,
-            backgroundColor: "transparent",
+            backgroundColor: "black",
+            justifyContent: 'center'
           }}
         >
-          <View style={{ flex: 1 }} />
+          {/* <View style={{ flex: 1 }} /> */}
           <View
             style={{
               backgroundColor: "white",
@@ -132,14 +142,17 @@ const Pickup = () => {
                 textAlignVertical: "center",
               }}
             >
-              Data Berhasil Disimpan!
+              {alertMessage}
             </Text>
             <Button
               mode="contained"
               color="green"
               onPress={() => {
                 setShowModal(false);
-                navigation.goBack()
+                if (!error) {
+                  
+                  navigation.goBack();
+                }
               }}
             >
               OK

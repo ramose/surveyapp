@@ -108,7 +108,7 @@ const LoginScreen = ({ navigation }) => {
           ]);
         } else {
             // console.log('id:',response.data.data.id);
-        //   storeData(JSON.stringify(response.data.data));
+          storeData(JSON.stringify(response.data.data));
             navigation.replace('jadwal', {data: response.data.data});
         }
       })

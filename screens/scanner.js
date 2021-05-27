@@ -18,9 +18,10 @@ const Scanner = ({route}) => {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
+
     param.onReceiveValue(data)
     navigation.goBack()
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    
   };
 
   if (hasPermission === null) {
