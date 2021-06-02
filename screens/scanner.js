@@ -17,6 +17,8 @@ const Scanner = ({route}) => {
   }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
+    console.log(data)
+
     setScanned(true);
 
     param.onReceiveValue(data)

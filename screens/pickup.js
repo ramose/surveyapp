@@ -53,11 +53,12 @@ const Pickup = () => {
   const [alertMessage, setAlertMessage] = useState("");
 
   const _updateInfo = (info) => {
-    // let s = info.split("|");
-    // console.log(s[1]);
+    let s = info.split("|");
+    // let sJson = JSON.parse(s)
+    // console.log(s.owner);
 
     try {
-      setInfo(JSON.parse(info));
+      setInfo(s);
     } catch (error) {
       setError(true);
       setAlertMessage("Tidak dapat membaca data");
@@ -177,8 +178,8 @@ const Pickup = () => {
             )}
             {info != null && (
               <View>
-                <Text style={styles.text}>{info.name}</Text>
-                <Text style={styles.text}>No. Rumah: {info.no_rumah}</Text>
+                <Text style={styles.text}>{info[1]}</Text>
+                <Text style={styles.text}>No. Rumah: {info[2]}</Text>
               </View>
             )}
           </View>

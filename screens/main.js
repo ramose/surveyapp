@@ -83,7 +83,7 @@ const Main = ({ route, navigation }) => {
       axios
         .get(listRumahUrl + "/privilege=" + user.priviledge + "&id_user=" + user.id) //privilege={{privilege}}&id_user={{id_user}}
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           if (response.data.status === "error") {
             Alert.alert(" ", response.data.message, [
               {
@@ -92,8 +92,8 @@ const Main = ({ route, navigation }) => {
               },
             ]);
           } else {
-            console.log('------- list rumah ----------------');
-            console.log(response.data.data);
+            // console.log('------- list rumah ----------------');
+            // console.log(response.data.data);
             // setData(response.data.data);
           }
         })
