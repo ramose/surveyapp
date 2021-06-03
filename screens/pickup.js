@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -15,7 +15,10 @@ import { Card, Title, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 import { useLayoutEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import Modal from "react-native-modal";
+import axios from "axios";
+import { urlPostData } from "../services/api";
 
 const styles = StyleSheet.create({
   container: {
@@ -51,6 +54,7 @@ const Pickup = () => {
   const [showModal, setShowModal] = useState(false);
   const step = 0.25;
   const [alertMessage, setAlertMessage] = useState("");
+  const user = useRef(null);
 
   const _updateInfo = (info) => {
     let s = info.split("|");
@@ -74,38 +78,93 @@ const Pickup = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => {
-        // return (
-        //   <Icon
-        //     name="check"
-        //     size={30}
-        //     color="white"
-        //     style={{ marginHorizontal: 10 }}
-        //     onPress={() => showAlert()}
-        //   />
-        // );
-        if (info != null && photo != null) {
-          return (
-            <Icon
-              name="check"
-              size={30}
-              color="white"
-              style={{ marginHorizontal: 10 }}
-              onPress={() => showAlert()}
-            />
-          );
-        }
+        // if (info != null && photo != null) {
+        return (
+          <Icon
+            name="check"
+            size={30}
+            color="white"
+            style={{ marginHorizontal: 10 }}
+            onPress={() => postData()}
+          />
+        );
+        // }
       },
     });
   }, [info, photo]);
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const showAlert = () => {
     // Alert.alert("Ambil Sampah", "Data sudah tercatat.", [
     //   { text: "OK", onPress: () => navigation.goBack() },
     // ]);
-    setError(false);
-    setAlertMessage("Data berhasil disimpan!");
-    setShowModal(true);
+
+    // setError(false);
+    // setAlertMessage("Data berhasil disimpan!");
+    // setShowModal(true);
+    postData();
   };
+
+  async function getUser() {
+    try {
+      let _user = await AsyncStorage.getItem("@user");
+      // console.log(_user)
+      user.current = JSON.parse(_user);
+    } catch (e) {
+      // saving error
+      console.log("error get data:", e);
+    }
+  }
+
+  function postData() {
+    // console.log(user.current.id)
+
+    let data = {
+      collector_id: user.current.id.toString(),
+      id_home: info[0],
+      id_cluster: info[6],
+      id_housing: info[4],
+      volume: total.toString(),
+      pictures: photo.uri,
+    };
+
+    // console.log(data);
+
+    const formData = new FormData();
+    formData.append("collector_id", user.current.id.toString());
+    formData.append("id_home", info[0]);
+    formData.append("id_cluster", info[6]);
+    formData.append("id_housing", info[4]);
+    formData.append("volume", total.toString());
+    formData.append("photo", {
+      uri: photo.uri,
+      type: "image/jpeg",
+      name: "photo.jpg",
+    });
+
+    console.log("urlPostData:", urlPostData);
+
+    axios({
+      url: urlPostData,
+      method: "POST",
+      data: formData,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        console.log("res:", res.status);
+        if (res.status === 201) {
+          setAlertMessage("Data berhasil disimpan!");
+          setShowModal(true);
+        }
+      })
+      .catch((err) => console.log("err:", err));
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -115,7 +174,7 @@ const Pickup = () => {
             flex: 1,
             padding: 10,
             backgroundColor: "black",
-            justifyContent: 'center'
+            justifyContent: "center",
           }}
         >
           {/* <View style={{ flex: 1 }} /> */}
@@ -151,7 +210,6 @@ const Pickup = () => {
               onPress={() => {
                 setShowModal(false);
                 if (!error) {
-                  
                   navigation.goBack();
                 }
               }}

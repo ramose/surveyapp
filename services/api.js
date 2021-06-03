@@ -3,6 +3,7 @@ export const loginUrl = baseurl + '/api/auth/signin';
 export const jadwalUrl = baseurl + '/api/scheduling/collector/';
 export const jadwalHariIniUrl = baseurl + '/api/scheduling/date/';
 export const listRumahUrl = baseurl + 'api/m_housing/list?';
+export const urlPostData = baseurl + '/api/t_rit_home/add';
 
 //api/scheduling/date/2021-01-01/{{collector}}/{{company}}
 
