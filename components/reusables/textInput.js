@@ -10,10 +10,14 @@ const styles = StyleSheet.create({
   input:{
     paddingTop:3,
     paddingBottom:3,
-    backgroundColor:'transparent'
+    backgroundColor:'transparent',
+    fontSize:20,
+    fontWeight:'bold'
   },
   label:{
-    fontWeight:'bold'
+    
+    fontSize:20,
+    color:'gray'
   },
   border: {
     height: 1,

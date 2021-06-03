@@ -37,8 +37,11 @@ const CameraScreen = ({route}) => {
   const __takePicture = async () => {
     try {
       if (!camera) return;
-      const photo = await camera.takePictureAsync();
-      console.log(photo);
+
+      
+      
+      const photo = await camera.takePictureAsync({quality:0.3});
+      // console.log(photo);
 
       setPreviewVisible(true);
       setCapturedImage(photo);

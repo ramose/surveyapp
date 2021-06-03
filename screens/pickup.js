@@ -10,6 +10,7 @@ import {
   Image,
   Alert,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import { Card, Title, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
@@ -19,6 +20,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // import Modal from "react-native-modal";
 import axios from "axios";
 import { urlPostData } from "../services/api";
+import { LogBox } from "react-native";
+import { TouchableHighlight } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
@@ -55,6 +58,13 @@ const Pickup = () => {
   const step = 0.25;
   const [alertMessage, setAlertMessage] = useState("");
   const user = useRef(null);
+  const [busy, setBusy] = useState(false);
+
+  // LogBox.ignoreWarnings([
+  //   'Non-serializable values were found in the navigation state',
+  // ]);
+
+  LogBox.ignoreAllLogs(true);
 
   const _updateInfo = (info) => {
     let s = info.split("|");
@@ -81,7 +91,7 @@ const Pickup = () => {
         // if (info != null && photo != null) {
         return (
           <Icon
-            name="check"
+            name="send"
             size={30}
             color="white"
             style={{ marginHorizontal: 10 }}
@@ -97,16 +107,16 @@ const Pickup = () => {
     getUser();
   }, []);
 
-  const showAlert = () => {
-    // Alert.alert("Ambil Sampah", "Data sudah tercatat.", [
-    //   { text: "OK", onPress: () => navigation.goBack() },
-    // ]);
-
-    // setError(false);
-    // setAlertMessage("Data berhasil disimpan!");
-    // setShowModal(true);
-    postData();
-  };
+  function updateVolume(add) {
+    
+    if (add) {
+      setTotal((total) => total + step);
+    } else {
+      if (total > 0) {
+        setTotal((total) => total - step);
+      }
+    }
+  }
 
   async function getUser() {
     try {
@@ -121,6 +131,7 @@ const Pickup = () => {
 
   function postData() {
     // console.log(user.current.id)
+    setBusy(true);
 
     let data = {
       collector_id: user.current.id.toString(),
@@ -145,7 +156,7 @@ const Pickup = () => {
       name: "photo.jpg",
     });
 
-    console.log("urlPostData:", urlPostData);
+    // console.log("urlPostData:", urlPostData);
 
     axios({
       url: urlPostData,
@@ -157,8 +168,9 @@ const Pickup = () => {
       },
     })
       .then((res) => {
-        console.log("res:", res.status);
+        // console.log("res:", res.status);
         if (res.status === 201) {
+          setBusy(false);
           setAlertMessage("Data berhasil disimpan!");
           setShowModal(true);
         }
@@ -168,6 +180,14 @@ const Pickup = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Modal transparent={false} animationType="slide" visible={true}>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <ActivityIndicator animating={true} size='large' />
+          <Text style={{fontSize:30}}>Menyimpan data...</Text>
+        </View>
+      </Modal>
       <Modal transparent={false} animationType="slide" visible={showModal}>
         <View
           style={{
@@ -276,17 +296,21 @@ const Pickup = () => {
           >
             <Text style={{ fontSize: 50 }}>{total}</Text>
             <View style={{ flexDirection: "row" }}>
+              <TouchableHighlight onPress={() => updateVolume(false)} underlayColor='yellow'>
               <Icon
                 name="minus"
                 size={50}
-                onPress={() => setTotal(total - step)}
+                
               />
+              </TouchableHighlight>
 
+              <TouchableHighlight onPress={() => updateVolume(true)} underlayColor='yellow'>
               <Icon
                 name="plus"
                 size={50}
-                onPress={() => setTotal((total) => total + step)}
+                
               />
+              </TouchableHighlight>
             </View>
           </View>
         </View>
